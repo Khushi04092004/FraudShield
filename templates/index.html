@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Credit Card Fraud Detection</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+  <style>
+    @keyframes blinkGradient {
+      0% {
+        background-position: 0% 50%;
+        opacity: 1;
+      }
+      50% {
+        background-position: 100% 50%;
+        opacity: 0.8;
+      }
+      100% {
+        background-position: 0% 50%;
+        opacity: 1;
+      }
+    }
+
+    .fancy-heading {
+      display: inline-block;
+      font-weight: 900;
+      font-size: 2.5rem;
+      background: linear-gradient(270deg, #ff416c, #ff4b2b, #1e90ff, #6a5acd);
+      background-size: 800% 800%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: blinkGradient 8s ease infinite;
+    }
+
+    .heading-wrapper {
+      padding: 1.5rem;
+      border-radius: 1rem;
+      background: radial-gradient(circle at top left, #ff9a9e, #fad0c4, #a1c4fd);
+      box-shadow: 0 0 40px rgba(255, 255, 255, 0.2);
+    }
+
+    .gradient-sub {
+      background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .form-input:focus {
+      transform: scale(1.02);
+      box-shadow: 0 0 10px rgba(100, 100, 255, 0.3);
+    }
+
+    #particles-js {
+      position: fixed;
+      z-index: -1;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-100 transition-all duration-300">
+
+<div id="particles-js"></div>
+
+<header class="text-white py-6 shadow-lg relative">
+  <div class="container mx-auto px-4 text-center heading-wrapper">
+    <h1 class="fancy-heading">Credit Card Fraud Detection System</h1>
+    <p class="mt-2 text-xl font-semibold gradient-sub">Machine Learning-Powered Fraud Detection</p>
+  </div>
+</header>
+
+<main class="container mx-auto px-4 py-10">
+  <!-- How It Works Section -->
+  <section class="max-w-3xl mx-auto mb-10">
+    <h2 class="text-2xl font-semibold text-center mb-4">🔍 How It Works</h2>
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg space-y-6 text-gray-800 dark:text-gray-100">
+      <p>📊 <strong>This system uses a powerful machine learning model (XGBoost)</strong> trained on anonymized transaction data to detect fraudulent behavior.</p>
+      <p>🔢 <strong>V1 to V4</strong> are anonymized features generated using <strong>PCA (Principal Component Analysis)</strong> to represent underlying patterns in transactions.</p>
+      <p>💰 <strong>Amount</strong> refers to the standardized value of the transaction. Input a numeric value for analysis.</p>
+      <p>🧠 The system predicts if the transaction is <span class="text-green-500 font-semibold">Legitimate</span> or <span class="text-red-500 font-semibold">Fraudulent</span> based on the inputs.</p>
+    </div>
+  </section>
+
+  <!-- Form Section -->
+  <div class="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 space-y-6">
+    <h2 class="text-2xl font-semibold">🧪 Test the Model</h2>
+    <form action="/predict" method="post" class="space-y-4">
+      <div><label class="block font-medium">V1</label><input type="number" step="any" name="feature_1" required class="form-input w-full p-2 border rounded-md dark:bg-gray-900 dark:border-gray-700" /></div>
+      <div><label class="block font-medium">V2</label><input type="number" step="any" name="feature_2" required class="form-input w-full p-2 border rounded-md dark:bg-gray-900 dark:border-gray-700" /></div>
+      <div><label class="block font-medium">V3</label><input type="number" step="any" name="feature_3" required class="form-input w-full p-2 border rounded-md dark:bg-gray-900 dark:border-gray-700" /></div>
+      <div><label class="block font-medium">V4</label><input type="number" step="any" name="feature_4" required class="form-input w-full p-2 border rounded-md dark:bg-gray-900 dark:border-gray-700" /></div>
+      <div><label class="block font-medium">Amount (Standardized)</label><input type="number" step="any" name="feature_29" required class="form-input w-full p-2 border rounded-md dark:bg-gray-900 dark:border-gray-700" /></div>
+      <div class="text-center">
+        <button type="submit" class="animate-button px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+          Analyze Transaction
+        </button>
+        <button type="button" onclick="autofill()" class="ml-2 px-6 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600 animate-button">
+          Autofill Sample Data
+        </button>
+      </div>
+    </form>
+  </div>
+</main>
+
+<footer class="bg-gray-800 text-white py-6 mt-12">
+  <div class="container mx-auto px-4 text-center">
+    <p>Credit Card Fraud Detection Project</p>
+    <p class="text-gray-400 text-sm mt-2">Powered by Machine Learning &amp; Flask</p>
+  </div>
+</footer>
+
+<script>
+  function autofill() {
+    const inputs = document.querySelectorAll('input');
+    const sampleData = [1.2, -0.4, -0.8, 1.1, 2.3];
+    inputs.forEach((el, i) => el.value = sampleData[i]);
+  }
+
+  tsParticles.load("particles-js", {
+    fpsLimit: 60,
+    background: { color: "transparent" },
+    particles: {
+      number: { value: 60 },
+      color: { value: ["#a78bfa", "#34d399", "#f472b6"] },
+      links: {
+        enable: true,
+        distance: 120,
+        color: "#cccccc",
+        opacity: 0.5
+      },
+      shape: { type: "circle" },
+      opacity: { value: 0.6 },
+      size: { value: 3 },
+      move: {
+        enable: true,
+        speed: 1.5,
+        attract: { enable: false },
+        outModes: "bounce"
+      }
+    },
+    interactivity: {
+      events: {
+        onHover: { enable: true, mode: "repulse" },
+        resize: true
+      },
+      modes: {
+        repulse: {
+          distance: 100,
+          duration: 0.4
+        }
+      }
+    }
+  });
+</script>
+</body>
+</html>
+
+

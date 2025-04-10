@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en" class="transition-colors duration-500">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Prediction Result</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
+  <style>
+    .gradient-bg {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dark-mode {
+      background-color: #1f2937;
+      color: white;
+    }
+
+    .dark-mode .bg-white {
+      background-color: #374151 !important;
+    }
+
+    .dark-mode .text-gray-800 {
+      color: #f9fafb !important;
+    }
+
+    .dark-mode .text-gray-700 {
+      color: #e5e7eb !important;
+    }
+
+    .dark-mode .bg-gray-100 {
+      background-color: #1f2937 !important;
+    }
+
+    .dark-mode .bg-gray-50 {
+      background-color: #4b5563 !important;
+    }
+
+    .dark-mode .bg-gray-200 {
+      background-color: #6b7280 !important;
+    }
+
+    .dark-mode .text-gray-600 {
+      color: #d1d5db !important;
+    }
+
+    .dark-mode .text-gray-400 {
+      color: #9ca3af !important;
+    }
+
+    .dark-mode .bg-indigo-600 {
+      background-color: #4338ca !important;
+    }
+
+    .dark-mode .bg-indigo-700 {
+      background-color: #3730a3 !important;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+
+    .toggle-switch input {
+      display: none;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 34px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px; width: 18px;
+      left: 3px; bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: #4f46e5;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+
+    /* Subtitle style */
+    .subheading {
+      font-size: 1.125rem;
+      font-weight: 500;
+      margin-top: 0.5rem;
+      color: #374151;
+    }
+
+    .dark-mode .subheading {
+      color: #e0e7ff;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.375rem;
+      display: inline-block;
+    }
+
+    #particles-js {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    .gradient-bg > div {
+      position: relative;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen transition-colors duration-500">
+
+  <!-- Header with particles -->
+  <header class="gradient-bg text-white py-6 shadow-md relative">
+    <div id="particles-js"></div>
+    <div class="container mx-auto px-4 text-center relative z-10">
+      <h1 class="text-3xl font-bold">Credit Card Fraud Detection System</h1>
+      <p class="subheading">Machine Learning-Powered Fraud Detection</p>
+    </div>
+  </header>
+
+  <!-- Theme Toggle -->
+  <div class="container mx-auto px-4 mt-4 text-right">
+    <label class="toggle-switch">
+      <input type="checkbox" id="themeToggle" />
+      <span class="slider"></span>
+    </label>
+    <span class="ml-2 text-sm font-medium text-gray-700 dark:text-white">Dark Mode</span>
+  </div>
+
+  <!-- Main Result Card -->
+  <main class="container mx-auto px-4 py-10">
+    <div id="resultCard" class="max-w-xl mx-auto bg-white rounded-xl shadow-md p-6">
+      <h2 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Prediction Result</h2>
+
+      <!-- Conditional Alert -->
+      <div class="text-center mb-4">
+        {% if prediction == 'Fraudulent' %}
+          <span class="inline-block px-4 py-2 bg-red-100 text-red-700 font-semibold rounded-full">
+            ⚠️ Fraudulent Transaction Detected
+          </span>
+        {% else %}
+          <span class="inline-block px-4 py-2 bg-green-100 text-green-700 font-semibold rounded-full">
+            ✅ Transaction is Legitimate
+          </span>
+        {% endif %}
+      </div>
+
+      <!-- Confidence Bars -->
+      <div class="mb-8">
+        <h3 class="text-lg font-semibold text-gray-800 mb-2 text-center">Prediction Probabilities</h3>
+        <div class="space-y-4">
+          <!-- Legitimate -->
+          <div>
+            <div class="flex justify-between text-sm font-medium text-gray-600 mb-1">
+              <span>✅ Legitimate</span>
+              <span>{{ (100 - confidence) | round(2) }}%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-5 overflow-hidden">
+              <div class="bg-green-500 h-full text-xs text-white text-center transition-all duration-700 ease-out"
+                   style="width: {{ 100 - confidence }}%;">
+                {{ (100 - confidence) | round(2) }}%
+              </div>
+            </div>
+          </div>
+
+          <!-- Fraudulent -->
+          <div>
+            <div class="flex justify-between text-sm font-medium text-gray-600 mb-1">
+              <span>⚠️ Fraudulent</span>
+              <span>{{ confidence | round(2) }}%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-5 overflow-hidden">
+              <div class="bg-red-500 h-full text-xs text-white text-center transition-all duration-700 ease-out"
+                   style="width: {{ confidence }}%;">
+                {{ confidence | round(2) }}%
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submitted Features -->
+      <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
+        <h3 class="text-lg font-medium text-gray-800 mb-2">Submitted Features</h3>
+        <ul class="text-gray-700 space-y-1">
+          <li><strong>V1:</strong> {{ features.V1 }}</li>
+          <li><strong>V2:</strong> {{ features.V2 }}</li>
+          <li><strong>V3:</strong> {{ features.V3 }}</li>
+          <li><strong>V4:</strong> {{ features.V4 }}</li>
+          <li><strong>Amount:</strong> {{ features.Amount }}</li>
+        </ul>
+      </div>
+
+      <!-- Buttons -->
+      <div class="flex justify-center gap-4">
+        <a href="/" class="px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">
+          ⬅️ Go Back
+        </a>
+        <button onclick="downloadReport()" class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
+          ⬇️ Download Report
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-6 mt-12">
+    <div class="container mx-auto px-4 text-center">
+      <p>Credit Card Fraud Detection Project</p>
+      <p class="text-gray-400 text-sm mt-2">Powered by Machine Learning &amp; Flask</p>
+    </div>
+  </footer>
+
+  <!-- JavaScript -->
+  <script>
+    const toggle = document.getElementById("themeToggle");
+    toggle.addEventListener("change", () => {
+      document.documentElement.classList.toggle("dark-mode");
+      loadParticles();
+    });
+
+    function downloadReport() {
+      const report = document.getElementById("resultCard").innerHTML;
+      const blob = new Blob([report], { type: "text/html" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "fraud_report.html";
+      link.click();
+    }
+
+    function loadParticles() {
+      const isDark = document.documentElement.classList.contains("dark-mode");
+      tsParticles.load("particles-js", {
+        fpsLimit: 60,
+        background: { color: "transparent" },
+        particles: {
+          number: { value: 60 },
+          color: { value: isDark ? ["#93c5fd", "#f9a8d4", "#fef08a"] : ["#6366f1", "#34d399", "#f472b6"] },
+          links: {
+            enable: true,
+            distance: 120,
+            color: isDark ? "#93c5fd" : "#cbd5e1",
+            opacity: 0.6
+          },
+          shape: { type: "circle" },
+          opacity: { value: 0.7 },
+          size: { value: 3 },
+          move: {
+            enable: true,
+            speed: 1.5,
+            attract: { enable: false },
+            outModes: "bounce"
+          }
+        },
+        interactivity: {
+          events: {
+            onHover: { enable: true, mode: "repulse" },
+            resize: true
+          },
+          modes: {
+            repulse: {
+              distance: 100,
+              duration: 0.4
+            }
+          }
+        }
+      });
+    }
+
+    // Load particles on first load
+    window.onload = loadParticles;
+  </script>
+</body>
+</html>
+
